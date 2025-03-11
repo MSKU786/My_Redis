@@ -1,2 +1,3 @@
-# my_redis
-Creating my own redis 
+# Redis Implementation(Go)
+
+Creating my own redis
