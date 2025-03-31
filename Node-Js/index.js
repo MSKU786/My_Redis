@@ -9,6 +9,7 @@ const server = net.createServer((socket) => {
     const cmd = args[0].toUpperCase();
     const command = data.toString().trim();
 
+    console.log(args, cmd, command);
     socket.write('+OK\r\n'); // Simple Redis protocol response
   });
 
