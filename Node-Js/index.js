@@ -1,19 +1,19 @@
 const net = require('net');
 const Parser = require('redis-parser');
 
-const server = net.createServer((connection) => {
+const server = net.createServer((socket) => {
   console.log('Client Connected');
-  connection.on('data', (data) => {
-    const parser = new Parser({
-      returnReply: (reply) => {
-        console.log('=>', reply);
-      },
-      returnError: (err) => {
-        console.log('=>', err);
-      },
-    });
-    parser.execute(data);
-    console.log('->', data.toString());
+  socket.on('data', (data) => {
+    const input = data.toString().trim(); // e.g., "SET mykey myvalue"
+    const args = input.split(' ');
+    const cmd = args[0].toUpperCase();
+    const command = data.toString().trim();
+
+    socket.write('+OK\r\n'); // Simple Redis protocol response
+  });
+
+  socket.on('end', () => {
+    console.log('Client disconnected');
   });
 });
 
