@@ -7,10 +7,19 @@ const server = net.createServer((socket) => {
     const input = data.toString().trim(); // e.g., "SET mykey myvalue"
     const args = input.split(' ');
     const cmd = args[0].toUpperCase();
-    const command = data.toString().trim();
 
-    console.log(args, cmd, command);
-    socket.write('+OK\r\n'); // Simple Redis protocol response
+    switch (cmd) {
+      case 'SET':
+        store.set(args[1], args[2]);
+        socket.write('OK\n'); // Reply with simple response
+        break;
+      case 'GET':
+        const value = store.get(args[1]) || '(nil)';
+        socket.write(`${value}\n`);
+        break;
+      default:
+        socket.write('ERROR: Unknown command\n');
+    }
   });
 
   socket.on('end', () => {
