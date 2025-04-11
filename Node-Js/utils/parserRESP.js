@@ -1,4 +1,4 @@
-function parserRESP(data) {
+export function parserRESP(data) {
   const str = data.toString();
   const [type, ...rest] = str.split('\r\n');
 

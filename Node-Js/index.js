@@ -1,25 +1,20 @@
 const net = require('net');
 const Parser = require('redis-parser');
+const { parserRESP } = require('./utils/parserRESP');
 
 const server = net.createServer((socket) => {
-  console.log('Client Connected');
   socket.on('data', (data) => {
-    const input = data.toString().trim(); // e.g., "SET mykey myvalue"
-    const args = input.split(' ');
-    const cmd = args[0].toUpperCase();
-
-    switch (cmd) {
-      case 'SET':
-        store.set(args[1], args[2]);
-        socket.write('OK\n'); // Reply with simple response
-        break;
-      case 'GET':
-        const value = store.get(args[1]) || '(nil)';
-        socket.write(`${value}\n`);
-        break;
-      default:
-        socket.write('ERROR: Unknown command\n');
-    }
+    try {
+      const agrs = parserRESP(data);
+      const command = args[0].toUpperCase();
+      const handler = commands[command];
+      if (!handler) {
+        socket.write('-ERR unknown command\r\n');
+        return;
+      }
+      const result = handler(args.slice(1));
+      console.log(result);
+    } catch (err) {}
   });
 
   socket.on('end', () => {
