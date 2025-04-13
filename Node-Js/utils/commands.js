@@ -14,10 +14,48 @@ const commands = {
 
     return 'OK';
   },
-  GET: (args) => {},
-  DEL: (args) => {},
-  EXPIRE: (args) => {},
-  TTL: (args) => {},
+  GET: (args) => {
+    const [key] = args;
+
+    const value = store.get(key);
+    const ttl = expireStore.get(key);
+
+    if (ttl && ttl < Date.now()) {
+      store.delete(key);
+      expireStore.delete(key);
+      return null;
+    }
+    return value || null;
+  },
+  DEL: (args) => {
+    let count = 0;
+    args.forEach((key) => {
+      if (store.has(key)) {
+        store.delete(key);
+        expireStore.delete(key);
+        count++;
+      }
+    });
+    return count;
+  },
+  EXPIRE: (args) => {
+    const [key, seconds] = args;
+
+    const ttl = seconds * 1000;
+    if (store.has(key)) {
+      expireStore.set(key, Date.now() + ttl);
+      return 1;
+    }
+    return 0;
+  },
+  TTL: (args) => {
+    const [key] = args;
+    if (!store.has(key)) return -2;
+    if (!expiry.has(key)) return -1;
+
+    const remaining = Math.ceil((expiry.get(key) - Date.now()) / 1000);
+    return remaining > 0 ? remaining : -2;
+  },
 };
 
 export default commands;
