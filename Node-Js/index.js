@@ -5,15 +5,17 @@ const { parserRESP } = require('./utils/parserRESP');
 const server = net.createServer((socket) => {
   socket.on('data', (data) => {
     try {
-      const agrs = parserRESP(data);
+      const args = parserRESP(data);
+      console.log(args);
       const command = args[0].toUpperCase();
       const handler = commands[command];
       if (!handler) {
+        console.log(error);
         socket.write('-ERR unknown command\r\n');
         return;
       }
       const result = handler(args.slice(1));
-      console.log(result);
+      console.log('this is result', result);
     } catch (err) {}
   });
 
