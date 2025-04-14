@@ -20,6 +20,16 @@ function parserRESP(data) {
   }
 }
 
+function serializeRESP(data) {
+  if (data === null) return '$-1\r\n';
+  if (typeof data === 'string') return `$${data.length}\r\n${data}\r\n`;
+  if (typeof data === 'number') return `:${data}\r\n`;
+  if (data === 'OK') return '+OK\r\n';
+
+  throw new Error(`Unsupported data type for RESP: ${typeof data}`);
+}
+
 module.exports = {
   parserRESP,
+  serializeRESP,
 };

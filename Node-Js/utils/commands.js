@@ -2,8 +2,8 @@ const { store, expireStore } = require('./map');
 
 const commands = {
   SET: (args) => {
-    console.log('Inside SET command', args);
     const [key, value, ...opts] = args;
+
     store.set(key, value);
 
     const exIndex = opts.indexOf('EX');

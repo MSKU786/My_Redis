@@ -1,15 +1,15 @@
 const net = require('net');
 const Parser = require('redis-parser');
-const { parserRESP } = require('./utils/parserRESP');
+const { parserRESP, serializeRESP } = require('./utils/parserRESP');
 const { commands } = require('./utils/commands');
 
 const server = net.createServer((socket) => {
   socket.on('data', (data) => {
     try {
       const args = parserRESP(data);
-      console.log(args);
+
       const command = args[0].toUpperCase();
-      console.log(command);
+
       const handler = commands[command];
 
       if (!handler) {
@@ -18,6 +18,7 @@ const server = net.createServer((socket) => {
         return;
       }
       const result = handler(args.slice(1));
+      socket.write(serializeRESP(result));
     } catch (err) {}
   });
 
