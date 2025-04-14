@@ -5,8 +5,6 @@ function parserRESP(data) {
   switch (type[0]) {
     //Array
     case '*':
-      console.log('this is parserReSP', type);
-      console.log('this is rest', rest);
       //Count number of elements
       const count = parseInt(type.slice(1), 10);
       const elements = [];

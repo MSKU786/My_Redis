@@ -1,4 +1,6 @@
-export const store = new Map();
+const store = new Map();
 
 // expire store for ttl (time to live)
-export const expireStore = new Map();
+const expireStore = new Map();
+
+module.exports = { store, expireStore };
