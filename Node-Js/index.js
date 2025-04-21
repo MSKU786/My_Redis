@@ -1,5 +1,4 @@
 const net = require('net');
-const Parser = require('redis-parser');
 const { parserRESP, serializeRESP } = require('./utils/parserRESP');
 const { commands } = require('./utils/commands');
 
