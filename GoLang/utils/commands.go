@@ -3,6 +3,7 @@ package utils
 // Adjusted to proper Go module path
 
 import (
+	"strconv"
 	"sync"
 	"time"
 )
@@ -47,4 +48,33 @@ var commands = map[string]CommandFunc {
 			}
 			return nil
 		},
+		"EXPIRE": func(args []string) interface{} { 
+				key, seconds := args[0], args[1]
+
+				ttl , err := strconv.Atoi(seconds)
+				if (err != nil) {
+					return nil
+				}
+				ttl = ttl * 1000;
+
+				value, ok := Store[key];
+				if (ok) {
+					var currentTime = time.Now().Unix();
+					ExpireStore[key] =  currentTime + ttl;
+					return 1;
+				}
+				return 0;
+		},
+		"DEL": (args) => {
+			var count = 0
+			for i : range(args) {
+				_, ok := Store[i];
+				if (ok) {
+					Store.Delete(i);
+					ExpireStore.Delete(i);
+					count += 1
+				}
+			}
+			return count;
+		}
 }
