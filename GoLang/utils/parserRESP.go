@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func parserRESP(data []byte) ([]string, error)  {
+func ParserRESP(data []byte) ([]string, error)  {
 	str := string(data)
 	lines := strings.Split(str, "\r\n");
 
@@ -41,7 +41,7 @@ func parserRESP(data []byte) ([]string, error)  {
 }
 
 
-func serializeRESP(data interface{}) interface{} {
+func SerializeRESP(data interface{}) interface{} {
 	if data == nil {
 		return "$-1\r\n"
 	}

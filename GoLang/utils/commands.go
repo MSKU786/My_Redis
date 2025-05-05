@@ -16,7 +16,7 @@ var (
 // Define a function type of commands
 type CommandFunc func(args []string) interface{}
 
-var commands = map[string]CommandFunc{
+var Commands = map[string]CommandFunc{
 	"SET": func(args []string) interface{} {
 			if len(args) < 2 {
 					return "Error: SET command requires at least 2 arguments"

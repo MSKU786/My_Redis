@@ -1,6 +1,7 @@
 package main
 
 import (
+	"GoLang/utils"
 	"bufio" // Helps to read data from the connection with buffering (like readline in Node).
 	"fmt"
 	"net" //Go's built-in networking package to work with TCP/UDP.
@@ -50,8 +51,10 @@ func handleConnection(conn net.Conn) {
 		text := scanner.Text();
 		fmt.Println("Recieved", text);
 
+		var args, err = utils.ParserRESP([]byte(text))
+		fmt.Println(args);
 		//Echo back the message Sends back a message to the client.
-		_,err := conn.Write([]byte("Echo:" + text + "\n"));
+		//_,err := conn.Write([]byte("Echo:" + text + "\n"));
 		if (err != nil) {
 			fmt.Println("Error writting to client", err);
 			return;
