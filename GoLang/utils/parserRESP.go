@@ -8,9 +8,11 @@ import (
 )
 
 func ParserRESP(data []byte) ([]string, error)  {
+	fmt.Println("debug 0", data);
 	str := string(data)
+	fmt.Println("debug 1", str);
 	lines := strings.Split(str, "\r\n");
-
+	fmt.Println("debug 1", lines);
 	if len(lines) < 1 {
 		return nil, errors.New("invalid input")
 	}
