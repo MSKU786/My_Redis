@@ -44,32 +44,20 @@ func handleConnection(conn net.Conn) {
 	fmt.Println("Client Connected...", conn.RemoteAddr());
 	
 	//Creates a line-by-line reader.
-	scanner := bufio.NewScanner(conn);
-	var input []byte;
-	for scanner.Scan() {
-
-		text := scanner.Text();
-		fmt.Println("Recieved", text);
-
-		// var args, err = utils.ParserRESP([]byte(text))
-		// fmt.Println(args);
-		// //Echo back the message Sends back a message to the client.
-		// //_,err := conn.Write([]byte("Echo:" + text + "\n"));
-
-		input = append(input, []byte(text)...);
-	}
+	reader := bufio.NewReader(conn)
+	for {
+		value, err := utils.ParseRESP(reader);
+		if err != nil {
+			fmt.Println("Failed to parse:", err)
+			break
+		}
 	
-
-	var args, error = utils.ParserRESP([]byte(input))
-	if (error != nil) {
-		fmt.Println("Error writting to client", error);
-		return;
+		fmt.Printf("Parsed RESP Value: %#v\n", value)
+		// Handle the RESP command, like PING, SET, GET...
 	}
-	fmt.Println(args);
-
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Connection error:", err)
-	}
+		// Handle the RESP command, like PING, SET, GET...\
+			
 	fmt.Println("Client disconnected:", conn.RemoteAddr())
+	}
 
-}
+
