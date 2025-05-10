@@ -57,26 +57,32 @@ func ParseRESP(reader *bufio.Reader) (interface{}, error) {
 			}
 			return string(buf[:strLen]), nil
 	
-		case '*': // Array
+		case '*': 
 			lenLine, err := reader.ReadString('\n')
 			if err != nil {
 				return nil, err
 			}
+
 			arrLen, err := strconv.Atoi(strings.TrimSuffix(lenLine, "\r\n"))
 			if err != nil {
 				return nil, err
 			}
-	
-			var items []interface{}
-			for i := 0; i < arrLen; i++ {
-				item, err := parseRESP(reader)
+
+			if arrLen == -1 {
+				return nil, nil
+			}
+
+			arr := make([]interface{}, arrLen);
+			for i:=0; i<arrLen; i++ {
+				value, err := ParseRESP(reader)
 				if err != nil {
 					return nil, err
 				}
-				items = append(items, item)
+				arr[i] = value
 			}
-			return items, nil
-	
+
+			return arr, nil;
+			
 		default:
 			return nil, fmt.Errorf("unknown RESP type: %c", prefix)
 		}
