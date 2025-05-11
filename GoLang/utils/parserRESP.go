@@ -89,24 +89,22 @@ func ParseRESP(reader *bufio.Reader) (interface{}, error) {
 }
 	
 
-
-
-func SerializeRESP(data interface{}) interface{} {
+func SerializeRESP(data interface{}) (string, error) {
 	if data == nil {
-		return "$-1\r\n"
+		return "$-1\r\n", nil // Null Bulk String
 	}
 
 	switch v := data.(type) {
 	case string:
 		if v == "OK" {
-			return "+OK\r\n"
+			return "+OK\r\n", nil // Simple String
 		}
-		return fmt.Sprintf("$%d\r\n%s\r\n", len(v), v)
+		return fmt.Sprintf("$%d\r\n%s\r\n", len(v), v), nil // Bulk String
 	case int:
-		return fmt.Sprintf(":%d\r\n", v)
+		return fmt.Sprintf(":%d\r\n", v), nil // Integer
 	case int64:
-		return fmt.Sprintf(":%d\r\n", v)
+		return fmt.Sprintf(":%d\r\n", v), nil
 	default:
-		return fmt.Sprintf("Unsupported data type for RESP: %T", data)
+		return "", fmt.Errorf("unsupported data type for RESP: %T", data)
 	}
 }

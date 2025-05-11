@@ -74,13 +74,22 @@ func handleConnection(conn net.Conn) {
 			}
 			result := handler(args);
 			if result != nil {
-				serialzieResult := utils.SerializeRESP(result);
-				if serializedBytes, ok := serialzieResult.([]byte); ok {
-					conn.Write(serializedBytes);
-				} else {
-					fmt.Println("Failed to serialize result to bytes");
+				fmt.Println("Result:", result);
+				serialzieResult, err := utils.SerializeRESP(result);
+
+				if err != nil {
+					fmt.Println("Failed to serialize result:", err);
 					conn.Write([]byte("-ERR internal server error\r\n"));
+					continue;
 				}
+				fmt.Println(serialzieResult);
+				conn.Write([]byte(serialzieResult));
+				//if serializedBytes, ok := serialzieResult.([]byte); ok {
+			//		conn.Write(serialzieResult);
+			//	} else {
+				// 	fmt.Println("Failed to serialize result to bytes");
+				// 	conn.Write([]byte("-ERR internal server error\r\n"));
+				// }
 			}
 
 		// Handle the RESP command, like PING, SET, GET...
