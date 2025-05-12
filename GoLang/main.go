@@ -51,7 +51,8 @@ func handleConnection(conn net.Conn) {
 		value, err := utils.ParseRESP(reader);
 		if err != nil {
 			fmt.Println("Failed to parse:", err)
-			break
+			conn.Write([]byte("-ERR failed to parse command\r\n"))
+    	continue
 		}
 	
 		
@@ -60,7 +61,12 @@ func handleConnection(conn net.Conn) {
 		parsedArray, ok := value.([]interface{})
 
 		if ok {
-			command := strings.ToUpper(parsedArray[0].(string));
+			command, ok := parsedArray[0].(string)
+			if !ok {
+					conn.Write([]byte("-ERR invalid command format\r\n"))
+					continue
+			}
+			command = strings.ToUpper(command)
 			handler, exists := utils.Commands[command];
 
 			if !exists {
@@ -68,9 +74,15 @@ func handleConnection(conn net.Conn) {
 				conn.Write([]byte("-ERR unknown command\r\n"));
 				continue;
 			}
+
 			args := make([]string, len(parsedArray[1:]))
 			for i, v := range parsedArray[1:] {
-				args[i] = v.(string)
+				  arg, ok := v.(string)
+					if !ok {
+							conn.Write([]byte("-ERR invalid argument format\r\n"))
+							continue
+					}
+					args[i] = arg
 			}
 			result := handler(args);
 			if result != nil {
